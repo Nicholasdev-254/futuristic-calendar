@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Futuristic Calendar</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+    linear-gradient(
+        135deg,
+        #030111,
+        #0a1030,
+        #051a25
+    );
+    padding:20px;
+}
+
+.cal-card{
+    width:min(900px,95%);
+    padding:40px;
+    border-radius:20px;
+
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(20px);
+
+    border:1px solid rgba(255,255,255,.1);
+
+    box-shadow:
+        0 0 15px rgba(0,255,255,.3),
+        0 0 40px rgba(0,255,255,.2);
+}
+
+#year{
+    font-family:Orbitron;
+    font-size:3rem;
+    color:white;
+    text-align:center;
+}
+
+#month-name{
+    font-family:Orbitron;
+    text-align:center;
+    margin:15px 0 30px;
+
+    color:cyan;
+
+    text-shadow:
+        0 0 10px cyan,
+        0 0 20px cyan,
+        0 0 40px cyan;
+}
+
+.controls{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:25px;
+}
+
+button{
+    background:transparent;
+    border:1px solid cyan;
+    color:cyan;
+    padding:10px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:1rem;
+    transition:.3s;
+}
+
+button:hover{
+    background:cyan;
+    color:black;
+
+    box-shadow:
+        0 0 10px cyan,
+        0 0 20px cyan;
+}
+
+.days,
+.dates{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    text-align:center;
+}
+
+.days{
+    margin-bottom:15px;
+}
+
+.days div{
+    font-family:Audiowide;
+    color:white;
+}
+
+.dates{
+    gap:10px;
+    transition:.4s ease;
+}
+
+.date{
+    font-family:Orbitron;
+    color:white;
+    padding:15px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.date:hover{
+    background:rgba(0,255,255,.25);
+    transform:translateY(-5px);
+
+    box-shadow:
+        0 0 10px cyan,
+        0 0 20px cyan;
+}
+
+.active{
+    background:cyan;
+    color:black;
+    font-weight:bold;
+
+    box-shadow:
+        0 0 10px cyan,
+        0 0 20px cyan,
+        0 0 40px cyan;
+}
+
+.slide-out-left{
+    opacity:0;
+    transform:translateX(-80px);
+}
+
+.slide-out-right{
+    opacity:0;
+    transform:translateX(80px);
+}
+
+.slide-in{
+    animation:slideIn .4s ease;
+}
+
+@keyframes slideIn{
+    from{
+        opacity:0;
+        transform:translateX(80px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateX(0);
+    }
+}
+
+.slide-in-month{
+    animation:monthGlow .4s ease;
+}
+
+@keyframes monthGlow{
+    from{
+        opacity:0;
+        letter-spacing:10px;
+    }
+
+    to{
+        opacity:1;
+        letter-spacing:2px;
+    }
+}
+#clock{
+    text-align:center;
+    font-family:Orbitron;
+    font-size:3rem;
+    color:cyan;
+    margin-bottom:20px;
+
+    text-shadow:
+        0 0 10px cyan,
+        0 0 20px cyan,
+        0 0 40px cyan,
+        0 0 80px cyan;
+
+    letter-spacing:4px;
+}
+#clock{
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+
+    0%,100%{
+        text-shadow:
+        0 0 10px cyan,
+        0 0 20px cyan,
+        0 0 40px cyan;
+    }
+
+    50%{
+        text-shadow:
+        0 0 20px cyan,
+        0 0 40px cyan,
+        0 0 80px cyan,
+        0 0 120px cyan;
+    }
+}
+.search-container{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+#date-search{
+    padding:10px 15px;
+    border-radius:10px;
+    border:1px solid cyan;
+
+    background:rgba(255,255,255,.05);
+    color:white;
+
+    font-family:Orbitron;
+    outline:none;
+}
+
+#date-search::placeholder{
+    color:rgba(255,255,255,.5);
+}
+
+#search-btn{
+    font-family:Orbitron;
+}
+#selected-date{
+    text-align:center;
+    margin-bottom:20px;
+    color:cyan;
+    font-family:Orbitron;
+}
+#today-btn{
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="cal-card">
+
+    <div id="clock"></div>
+
+<div class="search-container">
+    <input
+        type="Date"
+        id="date-search"
+        placeholder="DD/MM/YYYY"
+    >
+
+    <button id="search-btn">
+        Search
+    </button>
+</div>
+
+<div id="selected-date"></div>
+
+    <div id="year"></div>
+
+    <div class="controls">
+        <button id="prev">Previous</button>
+        <button id="today-btn">Today</button>
+        <button id="next">Next </button>
+    </div>
+
+    <h1 id="month-name"></h1>
+
+    <div class="days">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+    </div>
+
+    <div class="dates"></div>
+
+</div>
+
+<script>
+
+    const months = [
+    "January","February","March","April",
+    "May","June","July","August",
+    "September","October","November","December"
+];
+
+const today = new Date();
+
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
+
+const monthName = document.getElementById("month-name");
+const yearDisplay = document.getElementById("year");
+const datesContainer = document.querySelector(".dates");
+const clock = document.getElementById("clock");
+
+// =========================
+// Calendar
+// =========================
+
+function renderCalendar() {
+
+    datesContainer.innerHTML = "";
+
+    yearDisplay.textContent = currentYear;
+    monthName.textContent = months[currentMonth];
+
+    monthName.classList.remove("slide-in-month");
+    void monthName.offsetWidth;
+    monthName.classList.add("slide-in-month");
+
+    const firstDay =
+        new Date(currentYear, currentMonth, 1).getDay();
+
+    const daysInMonth =
+        new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    // Empty cells
+    for(let i = 0; i < firstDay; i++) {
+        const empty = document.createElement("div");
+        datesContainer.appendChild(empty);
+    }
+
+    // Dates
+    for(let day = 1; day <= daysInMonth; day++) {
+
+        const date = document.createElement("div");
+        date.classList.add("date");
+        date.textContent = day;
+
+        // Highlight today's date
+        if(
+            day === today.getDate() &&
+            currentMonth === today.getMonth() &&
+            currentYear === today.getFullYear()
+        ){
+            date.classList.add("active");
+        }
+
+        // Click date
+        date.addEventListener("click", () => {
+
+            document
+                .querySelectorAll(".date")
+                .forEach(d => d.classList.remove("active"));
+
+            date.classList.add("active");
+
+            document.getElementById("selected-date")
+                .textContent =
+                `Selected: ${day}/${currentMonth + 1}/${currentYear}`;
+        });
+
+        datesContainer.appendChild(date);
+    }
+}
+
+// =========================
+// Month Navigation
+// =========================
+
+function changeMonth(direction){
+
+    datesContainer.classList.remove("slide-in");
+
+    if(direction === "next"){
+        datesContainer.classList.add("slide-out-left");
+    } else {
+        datesContainer.classList.add("slide-out-right");
+    }
+
+    setTimeout(() => {
+
+        if(direction === "next"){
+
+            currentMonth++;
+
+            if(currentMonth > 11){
+                currentMonth = 0;
+                currentYear++;
+            }
+
+        } else {
+
+            currentMonth--;
+
+            if(currentMonth < 0){
+                currentMonth = 11;
+                currentYear--;
+            }
+        }
+
+        document
+.getElementById("today-btn")
+.addEventListener("click", goToToday);
+
+function goToToday(){
+
+    currentMonth = today.getMonth();
+    currentYear = today.getFullYear();
+
+    renderCalendar();
+
+    setTimeout(() => {
+
+        document
+        .querySelectorAll(".date")
+        .forEach(date => {
+
+            date.classList.remove("active");
+
+            if(
+                Number(date.textContent)
+                === today.getDate()
+            ){
+                date.classList.add("active");
+
+                document.getElementById("selected-date")
+                .textContent =
+                `Today: ${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`;
+            }
+        });
+
+    },100);
+}
+
+        renderCalendar();
+
+        datesContainer.classList.remove(
+            "slide-out-left",
+            "slide-out-right"
+        );
+
+        void datesContainer.offsetWidth;
+
+        datesContainer.classList.add("slide-in");
+
+    }, 400);
+}
+
+document
+.getElementById("next")
+.addEventListener("click", () => {
+    changeMonth("next");
+});
+
+document
+.getElementById("prev")
+.addEventListener("click", () => {
+    changeMonth("prev");
+});
+
+// =========================
+// Date Search
+// =========================
+
+function searchDate(){
+
+    const value =
+        document.getElementById("date-search").value;
+
+    if(!value) return;
+
+    const selectedDate = new Date(value);
+
+    const day = selectedDate.getDate();
+    const month = selectedDate.getMonth();
+    const year = selectedDate.getFullYear();
+
+    currentMonth = month;
+    currentYear = year;
+
+    renderCalendar();
+
+    setTimeout(() => {
+
+        document
+            .querySelectorAll(".date")
+            .forEach(date => {
+
+                date.classList.remove("active");
+
+                if(Number(date.textContent) === day){
+
+                    date.classList.add("active");
+
+                    document.getElementById("selected-date")
+                        .textContent =
+                        `Selected: ${day}/${month + 1}/${year}`;
+                }
+            });
+
+    }, 100);
+}
+
+document
+.getElementById("search-btn")
+.addEventListener("click", searchDate);
+
+document
+.getElementById("date-search")
+.addEventListener("change", searchDate);
+
+// =========================
+// Digital Clock
+// =========================
+
+function updateClock(){
+
+    const now = new Date();
+
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+
+    hours = String(hours).padStart(2, "0");
+    minutes = String(minutes).padStart(2, "0");
+    seconds = String(seconds).padStart(2, "0");
+
+    clock.textContent =
+        `${hours}:${minutes}:${seconds}`;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+// =========================
+// Start App
+// =========================
+
+renderCalendar();
+
+</script>
+
+</body>
+</html>
